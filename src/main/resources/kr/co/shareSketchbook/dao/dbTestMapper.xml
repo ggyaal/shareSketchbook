@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.shareSketchbook.dao.DBTestDAO">
+	<select id="selectToday" resultType="string">
+		select SYSDATE from dual
+	</select>
+	<select id="selectSum" resultType="int" parameterType="hashmap">
+		select #{num1} + #{num2}  from dual
+	</select>
+	<select id="selectMul" resultType="int" parameterType="hashmap">
+		select #{num1} * #{num2} * #{num3}  from dual
+	</select>
+</mapper>

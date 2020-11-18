@@ -1,0 +1,25 @@
+## 자신의 노트를 공유하기 위한 웹 사이트
+
+1. 만들어질 화면 구상
+	/pages_img/**
+	
+2. 전체적인 서비스 구상
+	1. 로그인 - 로그인/아웃, 회원가입, 회원정보수정/삭제
+	2. 일정 - 캘린더(fullCalendar 이용), 필터기능을 추가하여 카테고리에 따른 일정을 분류, 혹은 공개/비공개 일정을 설정 후 다른 회원 일정을 볼 수 있음
+	3. 친구 - 일정을 공유할 친구추가/삭제 기능
+	4. 알림 - 친구신청 혹은 같은 일정을 만들거나 공유신청 등을 위해
+	5. 커스텀 - 기본적인 ui의 색상이나 위치, 메모 등을 저장할 수 있음
+	
+3. 데이터 테이블
+	1. 로그인 - user_keys {
+				userKey varchar2(10) primary key,	// 회원 아이디
+				password varchar2(80) not null,		// 비밀번호
+				emailId varchar2(20) unique,		// 이메일 아이디
+				name varchar2(10) not null,			// 이름
+				nickName varchar2(10) not null,		// 닉네임
+				gender varchar2(5) not null,		// 성별
+				lv number default 0,				// 레벨
+				photo varchar2(100),				// 사진
+				enabled number default 1			// 계정 활성화/비활성화
+			}
+	
