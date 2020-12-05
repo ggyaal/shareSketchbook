@@ -1,6 +1,4 @@
-const token_header = $("meta[name='_csrf_header']").attr('content');
-const token_name = $("meta[name='_csrf_name']").attr('content');
-const token_ = $("meta[name='_csrf']").attr('content');
+const token_ = $('meta[name="_csrf"]').attr('content').split(',');
 
 function aJax_isLogin(isLogin) {
 	$.ajax({
@@ -15,16 +13,41 @@ function aJax_isLogin(isLogin) {
 			}
 	    },
 		beforeSend	: function(crsfToken){
-			crsfToken.setRequestHeader(token_header, token_);
+			crsfToken.setRequestHeader(token_[0], token_[2]);
+		}
+	});
+}
+
+function aJax_whoIsIt(it, is, callBack) {
+	$.ajax({
+		data		: {
+			it: it,
+			is: is
+		},
+		type		: "POST",
+		url			: 'whoIsIt',
+		success		: (userData) => {
+			callBack(userData);
+		},
+		beforeSend	: function(crsfToken){
+			crsfToken.setRequestHeader(token_[0], token_[2]);
 		}
 	});
 }
 
 const csrf_token_form = (locate) => {
 	var hiddenInput = $("<input>").attr("type", "hidden")
-								.attr('name', token_name)
-								.attr('value', token_);
+								.attr('name', token_[1])
+								.attr('value', token_[2]);
 	locate.append(hiddenInput);
+}
+
+
+const tagCon = (tag, tagAttr, tagCss) => {
+	var this_tag = $('<' + tag + '>');
+	if(tagAttr) this_tag.attr(tagAttr);
+	if(tagCss) this_tag.css(tagCss);
+	return this_tag;
 }
 
 

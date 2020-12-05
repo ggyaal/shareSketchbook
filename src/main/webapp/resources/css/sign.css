@@ -1,0 +1,42 @@
+.wrapper .key-formwork {
+	width: 100%;
+	height: 100%;
+	background: #8a8686;
+	border-radius: 20px;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column nowrap;
+	
+}
+.key-formwork .item {
+	width: 90%;
+	height: 33%;
+	display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.key-formwork .formwork-prop {
+	width: 40%;
+	height: 90%;
+	background: beige;
+	border-radius: 10px;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+	flex-flow: column;
+    position: relative;
+	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+}
+.text-form {
+	height: 40px;
+    margin-bottom: 10px;
+}
+.text-form input[type='text'], .text-form input[type='password'] {
+	height: 30px;
+    width: 200px;
+    border: none;
+    border-bottom: 2px solid lightblue;
+    background: none;
+    outline: none;
+}

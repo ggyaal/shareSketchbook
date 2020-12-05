@@ -6,13 +6,13 @@ const lockDiv = (isVi) => {
 	if(isVi) {
 		$(".lock-off").remove();
 		$(".lock-off-bg").remove();
-		var lockOn = $("<div>").addClass("lock-on").append($("<div>").addClass("lock-click"));
-		var lockOnBg = $("<div>").addClass("lock-on-bg");
+		var lockOn = tagCon('div', {'class': 'lock-on'}).append(tagCon('div', {'class': 'lock-click'}));
+		var lockOnBg = tagCon('div', {'class': 'lock-on-bg'});
 		mainBook.append(lockOn).append(lockOnBg);
 	} else {
 		$(".lock-on").remove();
 		$(".lock-on-bg").remove();
-		var lockOff = $("<div>").addClass("lock-off").append($("<div>").addClass("lock-click"));
+		var lockOff = tagCon('div', {'class': 'lock-off'}).append(tagCon('div', {'class': 'lock-click'}));
 		mainBook.append(lockOff);
 	}
 }
@@ -117,47 +117,40 @@ function loginModal() {
 	var mainBook = $(".main-book");
 	
 	if(mainBook.find(".login-modal").length == 0) {
-		var modal = $("<div>").addClass("login-modal modal-con");
-		var formTag = $("<form>").attr("action", "login")
-		.attr("method", "post");		
-		var title = $("<b>").addClass("modal-title")
-		.html("열쇠 입력");
+		var modal = tagCon('div', {'class': 'login-modal modal-con'});
+		var formTag = tagCon('form', {'action': 'login', 'method': 'post'});	
+		var title = tagCon('b', {'class': 'modal-title'}).html("열쇠 입력");
 		modal.append(title);
 		
-		var keyForm = $("<div>").addClass("text-form");
-		var userKey = $("<input>")
-							.attr("type", "text")
-							.attr("class", "login-input")
-							.attr("id", "userKey")
-							.attr("name", "userKey")
-							.attr("placeholder", "userKey");
+		var keyForm = tagCon('div', {'class': 'text-form'});
+		var userKey = tagCon('input', {'type': 'text', 'class': 'login-input', 'id': 'userKey', 'name': 'userKey', 'placeholder': 'userKey'});
 		keyForm.append(userKey);
-		var passForm = $("<div>").addClass("text-form");
-		var password = $("<input>")
-							.attr("type", "password")
-							.attr("class", "login-input")
-							.attr("id", "password")
-							.attr("name", "password")
-							.attr("placeholder", "password");
+		var passForm = tagCon('div', {'class': 'text-form'});
+		var password = tagCon('input', {'type': 'password', 'class': 'login-input', 'id': 'password', 'name': 'password', 'placeholder': 'password'});
 		passForm.append(password);
 		
-		var keyInBtn = $("<button>").addClass("key-in")
-									.html("열쇠 넣기")
-									.css("float", "right")
-									.css("display", "none");
+		var keyInBtn = tagCon('button', {'id': 'key-in'}, {'float': 'right', 'display': 'none'}).html('열쇠 넣기');
 		formTag.append(keyForm).append(passForm).append(keyInBtn);
 		
 		csrf_token_form(formTag);
 		
 		modal.append(formTag);
-		var keys = $("<div>").addClass("keys");
-		var keysImg = $("<div>").addClass("keysImg");
+		var makeKey = tagCon('a', {'href': 'sign', 'class': 'modal-link', 'id': 'makeKey'}).html('열쇠가 없으신가요?');
+		modal.append(makeKey);
+		
+		var keys = tagCon('div', {'class': 'keys'});
+		var keysImg = tagCon('div', {'class': 'keysImg'});
 		keys.append(keysImg);
 		modal.append(keys);
 		
 		
 		modal_bg("main-book", 20);
 		mainBook.append(modal);
+		
+		$("#userKey").keyup(function() {
+			var data = $(this).val();
+			
+		});
 	}
 	else {
 		modal_bg("main-book", 20, false);
@@ -184,4 +177,5 @@ $(document).on({
 				var lockOnBg = $(".lock-on-bg");
 				lockOn.css("transform", "");	
 				lockOnBg.css("transform", "");	
-       }}, '.lock-click');
+       }
+}, '.lock-click');

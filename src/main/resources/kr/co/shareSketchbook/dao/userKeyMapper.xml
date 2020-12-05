@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.shareSketchbook.dao.UserKeyDAO">
+	<select id="selectByIt" parameterType="hashmap" resultType="UserKeyVO">
+		select * from user_keys
+		<where>
+			<if test="userKey!=null">userKey=#{userKey}</if>
+			<if test="emailId!=null">emailId=#{emailId}</if>
+			<if test="name!=null">name=#{name}</if>
+			<if test="nickName!=null">nickName=#{nickName}</if>
+		</where>
+	</select>
+	
+	<insert id="insertKey" parameterType="UserKeyVO">
+		insert into user_keys (userKey, password, name, nickName, gender, lv, enabled)
+		values (#{userKey}, #{password}, #{name}, #{nickName}, #{gender}, 0, 1)
+	</insert>
+	
+	<update id="updateKey" parameterType="UserKeyVO">
+		update user_keys
+		<set>
+			<if test="password!=null">password=#{password},</if>
+			<if test="nickName!=null">nickName=#{nickName},</if>
+			<if test="lv!=null">lv=#{lv},</if>
+			<if test="photo!=null">photo=#{photo},</if>
+			<if test="enabled!=null">enabled=#{enabled}</if>
+		</set>
+		where userKey=#{userKey}
+	</update>
+	
+	<delete id="deleteKey" parameterType="string">
+		delete user_keys where userKey=#{userKey}
+	</delete>
+	
+	<select id="selectKeyAuth" parameterType="string" resultType="hashmap">
+		select * from user_authority where userKey=#{userKey}
+	</select>
+	
+	<insert id="insertKeyAuth" parameterType="hashmap">
+		insert into  user_authority values (#{userKey}, #{auth})
+	</insert>
+	
+	<update id="updateKeyAuth" parameterType="hashmap">
+		update user_authority set auth=#{auth} where userKey=#{userKey}
+	</update>
+	
+</mapper>

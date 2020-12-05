@@ -4,9 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="_csrf" content="${_csrf.token}"/>
-<meta name="_csrf_header" content="${_csrf.headerName}"/>
-<meta name="_csrf_name" content="${_csrf.parameterName}"/>
+<meta name="_csrf" content="${_csrf.headerName},${_csrf.parameterName},${_csrf.token}"/>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>shareSketchbook | main</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/main.css" />

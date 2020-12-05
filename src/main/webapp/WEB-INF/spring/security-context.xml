@@ -10,7 +10,7 @@
         <http auto-config="true">
             <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
             <intercept-url pattern="/**" access="permitAll" />
-            <form-login login-page="/"
+            <form-login login-page="/login"
             	default-target-url="/" username-parameter="userKey"
             	password-parameter="password" authentication-failure-url="/error/failLogin"
             	always-use-default-target="false" />
@@ -23,12 +23,14 @@
             <csrf/>
         </http>
         
+        <beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+        
         <authentication-manager>
             <authentication-provider>
-                <user-service>
-                    <user name="admin" password="admin" authorities="ROLE_ADMIN"/>
-                    <user name="user" password="user1" authorities="ROLE_USER"/>
-                </user-service>
+                <jdbc-user-service data-source-ref="dataSource"
+                users-by-username-query="select userKey as username, password, enabled from user_keys where userKey=?"
+                authorities-by-username-query="select userKey as username, auth as AUTHORITY from user_authority where userKey=?"/>
+                <password-encoder ref="bcryptPasswordEncoder"></password-encoder>
             </authentication-provider>
         </authentication-manager>
     
