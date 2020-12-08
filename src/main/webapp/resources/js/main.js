@@ -1,35 +1,14 @@
 const token_ = $('meta[name="_csrf"]').attr('content').split(',');
 
-function aJax_isLogin(isLogin) {
+const aJax_ = (url, data, callBack) => {
 	$.ajax({
-	    data		: "",
-	    type		: "POST",
-	    url			: 'isLogin',
-	    success		: function(userKey) {
-	        if(userKey!='anonymousUser') {
-	        	isLogin(true);
-	        } else {
-				isLogin(false);
-			}
-	    },
-		beforeSend	: function(crsfToken){
-			crsfToken.setRequestHeader(token_[0], token_[2]);
-		}
-	});
-}
-
-function aJax_whoIsIt(it, is, callBack) {
-	$.ajax({
-		data		: {
-			it: it,
-			is: is
+		data: data,
+		type: 'POST',
+		url: url,
+		success: (data) => {
+			callBack(data);
 		},
-		type		: "POST",
-		url			: 'whoIsIt',
-		success		: (userData) => {
-			callBack(userData);
-		},
-		beforeSend	: function(crsfToken){
+		beforeSend: function(crsfToken) {
 			crsfToken.setRequestHeader(token_[0], token_[2]);
 		}
 	});

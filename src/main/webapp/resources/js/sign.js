@@ -109,9 +109,7 @@ $("#userKey").keyup(function() {
 		if(data.length > 3) {
 			errorDiv.html('');
 			
-			aJax_whoIsIt(data, 'userKey', (userData) => {
-				console.log('2 > ' + userData);
-				
+			aJax_('whoIsIt', {it: data, is: 'userKey'}, (userData) => {
 				if(userData.length === 0) {
 					errorDiv.css('color', 'green').html('사용 가능한 키입니다 !');
 					if(formWork_prop.find('.lineCanvas').length === 0){
@@ -191,7 +189,7 @@ $("#nickName").keyup(function() {
 			formWork_prop.find('.lineCanvas').remove();		
 		}else {
 			
-			var userData = aJax_whoIsIt(data, 'nickName', (userData) => {
+			aJax_('whoIsIt', {it: data, is: 'nickName'}, (userData) => {
 				if(userData.length === 0) {
 					errorDiv.css('color', 'red').html('');
 					formPropOk[1][1] = true;

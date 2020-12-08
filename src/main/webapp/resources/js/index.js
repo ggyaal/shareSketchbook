@@ -19,9 +19,8 @@ const lockDiv = (isVi) => {
 
 $(function() {
 
-	aJax_isLogin((isLogin) => {
-		
-		if(isLogin) {
+	aJax_('isLogin', '', (isLogin) => {
+		if(isLogin != 'anonymousUser' || isLogin === undefined || isLogin === null) {
 			mainBook.append(nextPageBtn).append(prevPageBtn);
 			lockDiv(false);
 		} else {
@@ -70,7 +69,7 @@ nextPageBtn.click(function() {
 		isMove = true;
 		return;
 	}
-	currentPage.css("transform", "rotateX(261deg)");
+	currentPage.css("transform", "perspective(2000px) rotateX(261deg)");
 	activeToPage();
 	setTimeout(() => {
 		currentPage.css("opacity", 0);		
@@ -93,7 +92,7 @@ prevPageBtn.click(function() {
 
 nextPageBtn.hover(function() {
 	var currentPage = $(".active-page");
-	if(isMove && !currentPage.hasClass("fixed-page")) currentPage.css("transform", "rotateX(15deg)");	
+	if(isMove && !currentPage.hasClass("fixed-page")) currentPage.css("transform", "perspective(2000px) rotateX(15deg)");	
 }, function() {
 	var currentPage = $(".active-page");
 	if(isMove && !currentPage.hasClass("fixed-page")) currentPage.css("transform", "");
@@ -103,13 +102,13 @@ prevPageBtn.hover(function() {
 	var currentPage = $(".active-page");
 	if(isMove) {
 		currentPage.prev(".move-page").css("opacity", 1);			
-		currentPage.prev(".move-page").css("transform", "rotateX(250deg)");			
+		currentPage.prev(".move-page").css("transform", "perspective(2000px) rotateX(250deg)");			
 	}
 }, function() {
 	var currentPage = $(".active-page");
 	if(isMove) {
 		currentPage.prev(".move-page").css("opacity", 0);			
-		currentPage.prev(".move-page").css("transform", "rotateX(261deg)");	
+		currentPage.prev(".move-page").css("transform", "perspective(2000px) rotateX(261deg)");	
 	}
 });
 // login
