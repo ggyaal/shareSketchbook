@@ -1,3 +1,4 @@
+/*book*/
 .wrapper .main-book {
 	position: relative;
 	height: 90%;
@@ -28,9 +29,9 @@
 	height: 50px;
 	background: #35373a;
 	position: absolute;
-	z-index: 5;
+	z-index: 15;
 }
-
+/*page*/
 .main-book .main-book-cover {
 	position: absolute;
     top: 0;
@@ -48,7 +49,7 @@
     font-family: fantasy;
     transition: 1s;
     transform-origin: top center;
-    z-index: 4;
+    z-index: 11;
 }
 
 .main-book .main-book-page {
@@ -70,6 +71,7 @@
     transition: 1s;
     transform-origin: top center;
 }
+
 .page-content {
 	font-size: 10pt;
 	width: 95%;
@@ -79,13 +81,11 @@
     overflow: hidden;
 }
 
-.active-page {
-	z-index: 4;
-}
-.active-prev-page {
-	z-index: 3;
+.page-back {
+	transform: perspective(2000px) rotateX(261deg);
 }
 
+/*button*/
 .main-book .book-next {
 	height: 100px;
 	width: 300px;
@@ -93,7 +93,7 @@
 	position: absolute;
 	bottom: 0;
 	right: 0;
-	z-index: 10;
+	z-index: 15;
 }
 .main-book .book-prev {
 	height: 100px;
@@ -102,7 +102,7 @@
 	position: absolute;
 	top: -100px;
 	left: 0;
-	z-index: 10;
+	z-index: 15;
 }
 /*lock*/
 .main-book .lock-on {

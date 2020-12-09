@@ -18,6 +18,21 @@ const lockDiv = (isVi) => {
 }
 
 $(function() {
+	
+	const pageNo = 10;
+
+	for(i=0;i<pageNo;i++) {
+		var page = $('<div />', {
+			id: 'p' + (i+1),
+			class: 'main-book-page move-page'
+		}).css({'z-index': pageNo - i}).html($('<div />', {class: 'page-content'}));
+		
+		mainBook.append(page);
+		
+		if(i == pageNo - 1) page.addClass('final-page');
+	}
+	
+	
 
 	aJax_('isLogin', '', (isLogin) => {
 		if(isLogin != 'anonymousUser' || isLogin === undefined || isLogin === null) {
@@ -28,89 +43,95 @@ $(function() {
 		}
 	
 	});
-
-});
-
-
-var currentPage = 0;
-var isMove = true;
-
-
-bookPages.get(0).classList.add("active-page");
-bookPages.get(1).classList.add("active-prev-page");
-
-function activeToPage(index = 1) {
-	var currentPage = $(".active-page");
-	var nextPage = $(".active-prev-page");
 	
-	if(index === 1) {
-		currentPage.removeClass("active-page");
-		currentPage.next(".move-page").addClass("active-page");
-		setTimeout(() => {
-			nextPage.removeClass("active-prev-page");
-			nextPage.next().addClass("active-prev-page");			
-		}, 500);
-	}else if(index === -1) {
-		nextPage.removeClass("active-prev-page");
-		nextPage.prev().addClass("active-prev-page");			
-		setTimeout(() => {
-			currentPage.removeClass("active-page");
-			currentPage.prev(".move-page").addClass("active-page");
-		}, 500);
-	}
-}
-
-nextPageBtn.click(function() {
-	var currentPage = $(".active-page");
-	isMove = false;
+	var currentPage = 0;
+	var isMove = true;
 	
-	if(currentPage.hasClass("fixed-page")) {
-		alert("마지막 페이지 입니다 !");
+	function viewToPage(pageNum) {
+		var crntPage = $('.active-page');
+		var viewPage = $('#p' + pageNum);
+		
+		isMove = false;
+		
+		if(currentPage == pageNum) {
+			alert('현재 페이지입니다.');
+		}else if(currentPage < pageNum) {
+			for(i=currentPage; i<pageNum; i++) {
+				thisPageBack(i);
+			}
+		} else {
+			for(i=currentPage; i>=pageNum; i--) {
+				thisPageFront(i);
+			}
+		}
+		
+		crntPage.removeClass('active-page');
+		viewPage.addClass('active-page');
+		currentPage = pageNum;
 		isMove = true;
-		return;
+		
 	}
-	currentPage.css("transform", "perspective(2000px) rotateX(261deg)");
-	activeToPage();
-	setTimeout(() => {
-		currentPage.css("opacity", 0);		
-		isMove = true;
-	}, 1000);
-});
-
-prevPageBtn.click(function() {
-	var currentPage = $(".active-page");
-	if(currentPage.hasClass("main-book-cover")) return;
-
-	isMove = false;
-	currentPage.prev(".move-page").css("opacity", 1);			
-	currentPage.prev(".move-page").css("transform", "");
-	activeToPage(-1);
-	setTimeout(() => {
-		isMove = true;
-	}, 1000);
-});
-
-nextPageBtn.hover(function() {
-	var currentPage = $(".active-page");
-	if(isMove && !currentPage.hasClass("fixed-page")) currentPage.css("transform", "perspective(2000px) rotateX(15deg)");	
-}, function() {
-	var currentPage = $(".active-page");
-	if(isMove && !currentPage.hasClass("fixed-page")) currentPage.css("transform", "");
-});
-
-prevPageBtn.hover(function() {
-	var currentPage = $(".active-page");
-	if(isMove) {
-		currentPage.prev(".move-page").css("opacity", 1);			
-		currentPage.prev(".move-page").css("transform", "perspective(2000px) rotateX(250deg)");			
+	
+	function thisPageBack(pageNum) {
+		var thisPage = $('#p' + pageNum);
+		thisPage.addClass('page-back');
+		
+		setTimeout(function() {
+			thisPage.css('opacity', '0');
+		}, 1000);
 	}
-}, function() {
-	var currentPage = $(".active-page");
-	if(isMove) {
-		currentPage.prev(".move-page").css("opacity", 0);			
-		currentPage.prev(".move-page").css("transform", "perspective(2000px) rotateX(261deg)");	
+	
+	function thisPageFront(pageNum) {
+		var thisPage = $('#p' + pageNum);
+		thisPage.css('opacity', '1').removeClass('page-back');
+		
 	}
+	
+	nextPageBtn.click(function() {
+		var crntPage = $('.active-page');
+
+		if(isMove) crntPage.css("transform", "");
+		viewToPage(currentPage + 1);
+	});
+	
+	prevPageBtn.click(function() {
+		var crntPage = $('.active-page');
+		var prevPage = $(".active-page").prev(".move-page");
+		
+		if(crntPage.attr('id') == 'p0') {
+			alert('첫번째 페이지 입니다.');
+			return;
+		}
+		if(isMove) prevPage.css("transform", "");
+		viewToPage(currentPage - 1);
+		
+	});
+	
+	nextPageBtn.hover(function() {
+		var crntPage = $(".active-page");
+		if(isMove) crntPage.css("transform", "perspective(2000px) rotateX(15deg)");	
+	}, function() {
+		var crntPage = $(".active-page");
+		if(isMove) crntPage.css("transform", "");
+	});
+
+	prevPageBtn.hover(function() {
+		var prevPage = $(".active-page").prev(".move-page");
+		if(isMove) {
+			prevPage.css("opacity", 1);			
+			prevPage.css("transform", "perspective(2000px) rotateX(250deg)");			
+		}
+	}, function() {
+		var prevPage = $(".active-page").prev(".move-page");
+		if(isMove) {
+			prevPage.css("opacity", 0);			
+			prevPage.css("transform", "perspective(2000px) rotateX(261deg)");	
+		}
+	});
+	
 });
+
+
 // login
 function loginModal() {
 	var mainBook = $(".main-book");

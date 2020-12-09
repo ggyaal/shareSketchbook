@@ -17,33 +17,10 @@
 	<div class="container">
 		<div class="wrapper">
 			<div class="main-book">
-				<div class="main-book-cover move-page">
+				<div id="p0" class="main-book-cover move-page active-page">
 					<b>Share My SKETCHBOOK !</b>
 				</div>
-				<div id="p01" class="main-book-page move-page">
-					<b>Hello Page 1!</b>
-					<div class="page-content">
-						
-					</div>
-				</div>
-				<div id="p02" class="main-book-page move-page">
-					<b>Hello Page 2!</b>
-					<div class="page-content">
-						
-					</div>
-				</div>
-				<div id="p03" class="main-book-page move-page">
-					<b>Hello Page 3!</b>
-					<div class="page-content">
-						
-					</div>
-				</div>
-				<div id="p99" class="main-book-page move-page fixed-page">
-					<b>final Page !</b>
-					<div class="page-content">
-						
-					</div>
-				</div>
+
 			</div>
 		</div>
 	</div>
@@ -56,7 +33,7 @@
 	
 	<script src="${pageContext.request.contextPath }/resources/js/main.js"></script>
 	<script src="${pageContext.request.contextPath }/resources/js/index.js"></script>
-	<script src="${pageContext.request.contextPath }/resources/js/calendar.js"></script>
+	<script type="module" src="${pageContext.request.contextPath }/resources/js/content.js"></script>
 
 </body>
 </html>
