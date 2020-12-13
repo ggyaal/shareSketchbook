@@ -1,5 +1,6 @@
 DROP TABLE user_keys;
 DROP TABLE user_authority;
+DROP TABLE user_custom;
 
 CREATE TABLE user_keys (
 	userKey varchar2(10) PRIMARY KEY,		-- 회원 아이디
@@ -17,4 +18,17 @@ CREATE TABLE user_authority (
 	userKey varchar2(10) NOT NULL,
 	auth varchar2(20) NOT NULL,
 	CONSTRAINT user_auth FOREIGN KEY(userKey) REFERENCES user_keys(userKey) ON DELETE CASCADE
+);
+
+CREATE TABLE user_custom (
+	userKey varchar2(10) NOT NULL,
+	coverTitle varchar2(50),
+	coverColor varchar2(10),
+	cover varchar2(10),
+	page varchar2(10),
+	contents varchar2(100),
+	spring varchar2(10),
+	flagList varchar2(25),
+	flag varchar2(100),
+	CONSTRAINT user_custom FOREIGN KEY(userKey) REFERENCES user_keys(userKey) ON DELETE CASCADE
 );

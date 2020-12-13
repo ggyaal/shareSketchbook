@@ -4,13 +4,7 @@ html, body {
 	padding: 0;
 	margin: 0;
 }
-.modal-bg {
-	position: fixed;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 14;
-}
+
 .container {
 	position: fixed;
 	height: 100vh;
@@ -29,4 +23,61 @@ html, body {
 	justify-content: center;
 	align-items: center;
 	padding: 10px;
+}
+
+/*modal*/
+.modal-bg {
+	position: absolute;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 19;
+}
+
+.alert- {
+    min-width: 250px;
+    min-height: 200px;
+    position: absolute;
+    background: whitesmoke;
+    padding: 10px;
+    border-radius: 10px;
+    left: calc(50% - 125px);
+    top: 15%;
+    box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+    z-index: 20;
+}
+
+.alert-content {
+	position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+}
+
+.alert-btn {
+	position: absolute;
+    bottom: 10px;
+    height: 50px;
+    width: 200px;
+    left: calc(50% - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alert-btn- {
+    background: lightblue;
+    width: 90px;
+    height: 80%;
+    border: 2px solid #338ac7;
+    border-radius: 10px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.alert-btn-:hover {
+	background: #5bbbda;
 }

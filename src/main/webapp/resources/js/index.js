@@ -1,7 +1,13 @@
+var currentPage = 0;
+var finalPage;
+var isMove = true;
+var bookAlert = true;
+
 const mainBook = $(".main-book");
 const bookPages = mainBook.find(".move-page");
 const nextPageBtn = $("<div>").addClass("book-next");
 const prevPageBtn = $("<div>").addClass("book-prev");
+const flagCon = $('<div />', {class: 'flag-con'}).html($('<div />', {class: 'flag-'}));
 const lockDiv = (isVi) => {
 	if(isVi) {
 		$(".lock-off").remove();
@@ -16,37 +22,92 @@ const lockDiv = (isVi) => {
 		mainBook.append(lockOff);
 	}
 }
-
-$(function() {
+const pageRender = (num, data, custom) => {
+	var flagsInterval = 45;
+	var flagNum = 0;
+	var flagList = data.flagList || [];
 	
-	const pageNo = 10;
-
-	for(i=0;i<pageNo;i++) {
+	for(i=0;i<num;i++) {
 		var page = $('<div />', {
 			id: 'p' + (i+1),
 			class: 'main-book-page move-page'
-		}).css({'z-index': pageNo - i}).html($('<div />', {class: 'page-content'}));
+		}).css({'z-index': num - i}).html($('<div />', {class: 'page-content'}));
 		
 		mainBook.append(page);
+		if(flagList.includes(i + 1)) {
+			var flag = $('<div />', {
+				class: 'page-flag'
+			}).css('top', (30 + (flagsInterval * flagNum)) + 'px')
+				.html($('<div />', {class: 'flag-head', 'data-page': i+1}));
+			
+			page.append(flag);
+			flagNum++;
+		}
 		
-		if(i == pageNo - 1) page.addClass('final-page');
+		if(i == num - 1) page.addClass('final-page');
 	}
 	
-	
+	custom(data);
+}
 
+const allRender = () => {
 	aJax_('isLogin', '', (isLogin) => {
 		if(isLogin != 'anonymousUser' || isLogin === undefined || isLogin === null) {
-			mainBook.append(nextPageBtn).append(prevPageBtn);
-			lockDiv(false);
+			aJax_('userCustom', {userKey: isLogin},(data) => {
+				var pageNo = data.contents.split(',').length || 10;
+				finalPage = pageNo;
+				
+				pageRender(pageNo, data, (data) => {
+					if(data.cover) $('#p0').css('background', data.cover);
+					if(data.coverTitle) $('#p0').find('b').css('color', data.coverColor).html(data.coverTitle);
+					if(data.page) $('.main-book-page').css('background-color', data.page);
+					
+					if(data.flagList && data.flag) {
+						var flagList = [];
+						
+						$('.flag-head').each(function() {
+							flagList.push($(this).attr('data-page') * 1);
+						});
+						
+						data.flag.split(',').forEach(function(item, idx) {
+							var itemNo = item.slice(0, 1) * 1;
+							var color = item.slice(1);
+							
+							if($('.flag-head')[flagList.indexOf(itemNo)]) $('.flag-head')[flagList.indexOf(itemNo)].style.background = color;
+						});
+					}
+					
+					if(data.spring) {
+						$('head').append($('<style />', {type: 'text/css'}).append('.main-book.cust:before {background: ' + transColor(data.spring, 1.3) + '; } .main-book.cust:after {background: ' + data.spring + '; }'))
+						$('.main-book').addClass('cust');
+					}
+					
+					mainBook.append(nextPageBtn).append(prevPageBtn).append(flagCon);
+					var successEvent = $.Event('pageRenderSuccess', data);
+					$('body').trigger(successEvent);
+				});
+				
+				lockDiv(false);
+				
+			});
+			
 		} else {
 			lockDiv(true);
 		}
-	
+		
 	});
+}
+
+$(function() {
 	
-	var currentPage = 0;
-	var isMove = true;
+	allRender();
 	
+});
+
+$('body').on('pageRenderSuccess', function(data) {
+	viewToPage(currentPage);
+	
+	// page
 	function viewToPage(pageNum) {
 		var crntPage = $('.active-page');
 		var viewPage = $('#p' + pageNum);
@@ -54,7 +115,7 @@ $(function() {
 		isMove = false;
 		
 		if(currentPage == pageNum) {
-			alert('현재 페이지입니다.');
+			
 		}else if(currentPage < pageNum) {
 			for(i=currentPage; i<pageNum; i++) {
 				thisPageBack(i);
@@ -87,46 +148,81 @@ $(function() {
 		
 	}
 	
+	// next, prev button
 	nextPageBtn.click(function() {
 		var crntPage = $('.active-page');
-
-		if(isMove) crntPage.css("transform", "");
-		viewToPage(currentPage + 1);
+		
+		if(currentPage == $('.move-page').length) {
+			alert_('.main-book', 20, '_alert', '마지막 페이지입니다.', false);
+			return;
+		}else if(isMove && bookAlert) {
+			crntPage.css("transform", "");
+			viewToPage(currentPage + 1);
+		}
 	});
 	
 	prevPageBtn.click(function() {
 		var crntPage = $('.active-page');
-		var prevPage = $(".active-page").prev(".move-page");
+		var prevPage = crntPage.prev(".move-page");
 		
-		if(crntPage.attr('id') == 'p0') {
-			alert('첫번째 페이지 입니다.');
-			return;
+		if($('.active-page').length === 0) {
+			prevPage = $('.final-page');
 		}
-		if(isMove) prevPage.css("transform", "");
-		viewToPage(currentPage - 1);
+		
+		if(currentPage == 0) {
+			alert_('.main-book', 20, '_alert', '첫번째 페이지입니다.', false);
+			return;
+		}else if(isMove && bookAlert) {
+			prevPage.css("transform", "");
+			viewToPage(currentPage - 1);
+		}
 		
 	});
 	
 	nextPageBtn.hover(function() {
 		var crntPage = $(".active-page");
-		if(isMove) crntPage.css("transform", "perspective(2000px) rotateX(15deg)");	
+		if(isMove && bookAlert) crntPage.css("transform", "perspective(2000px) rotateX(15deg)");	
 	}, function() {
 		var crntPage = $(".active-page");
-		if(isMove) crntPage.css("transform", "");
+		if(isMove && bookAlert) crntPage.css("transform", "");
 	});
 
 	prevPageBtn.hover(function() {
 		var prevPage = $(".active-page").prev(".move-page");
-		if(isMove) {
+		
+		if($('.active-page').length === 0) {
+			prevPage = $('.final-page');
+		}
+		
+		if(isMove && bookAlert) {
 			prevPage.css("opacity", 1);			
 			prevPage.css("transform", "perspective(2000px) rotateX(250deg)");			
 		}
 	}, function() {
 		var prevPage = $(".active-page").prev(".move-page");
-		if(isMove) {
-			prevPage.css("opacity", 0);			
-			prevPage.css("transform", "perspective(2000px) rotateX(261deg)");	
+		
+		if($('.active-page').length === 0) {
+			prevPage = $('.final-page');
 		}
+		
+		if(isMove && bookAlert) {
+			prevPage.css("opacity", 0);			
+			prevPage.css("transform", "perspective(2000px) rotateX(261deg)");
+		}
+	});
+	
+	
+	// flags
+	$('.flag-head').click(function() {
+		var thisPage = $(this).attr('data-page') * 1;
+		if(bookAlert) viewToPage(thisPage); 
+	});
+	
+	$('.flag-con').find('.flag-').click(function() {
+		if(bookAlert) {
+			alert_('.main-book', 20, 'makeFlag', '이 페이지에 붙일까요?', true);	
+		}
+		bookAlert = false;
 	});
 	
 });
@@ -199,3 +295,53 @@ $(document).on({
 				lockOnBg.css("transform", "");	
        }
 }, '.lock-click');
+
+//alert
+$('body').on('alertOk', function(data) {
+	removModal($('#' + data.alertId).attr('data-modal'));
+	
+	if(data.alertId == '_alert') {
+		bookAlert = true;
+		
+	}  else if(data.alertId == 'makeFlag') {
+		bookAlert = true;
+		var flagList = [];
+		
+		$('.flag-head').each(function() {
+			flagList.push($(this).attr('data-page') * 1);
+		});
+		
+		if(flagList.includes(currentPage)) {
+			alert_('.main-book', 20, '_alert', '이미 붙혀있습니다.', false);
+			return;
+		} else if(currentPage == 0 || currentPage == finalPage + 1) {
+			alert_('.main-book', 20, '_alert', '해당 페이지는 붙힐 수 없습니다.', false);
+			return;			
+		} else {
+			flagList.push(currentPage);
+		}
+		
+		flagList.sort(function(a, b) {
+			return a - b;
+		});
+		
+		aJax_('setCustom', {'flagList': flagList.join(',')}, (data) => {
+			if(data) {
+				$('body').trigger('flagRender');
+			}else {
+				alert_('.main-book', 20, '_alert', '다시 시도해주세요 ..', false);
+			}
+		});
+	}
+});
+
+$('body').on('alertCancel', function(data) {
+	if(data.loc == 'main-book') {
+		bookAlert = true;
+	}
+});
+
+// reRender
+$('body').on('flagRender', function() {
+	console.log('오 모야');
+});

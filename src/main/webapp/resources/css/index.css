@@ -1,8 +1,8 @@
 /*book*/
 .wrapper .main-book {
 	position: relative;
-	height: 90%;
-	width: 90%;
+	height: 650px;
+	width: 700px;
 	background: #553c32;
 	border-radius: 20px;
 	padding: 20px;
@@ -185,7 +185,7 @@
     background: beige;
     height: 300px;
     width: 300px;
-    z-index: 15;
+    z-index: 20;
     padding: 50px 20px;
     border-radius: 20px;
     box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
@@ -235,13 +235,67 @@
     -webkit-mask: url(../images/keys.png);
     animation: rotateKeys 20s infinite;
 }
-.modal-link {
-	color: darkgray;
-    transition: 1s;
+/*flags*/
+.page-flag {
+    background: rgba(177, 169, 168, 0.4);
+    height: 40px;
+    width: 30px;
+    position: absolute;
+    right: 0;
+    top: 30px;
 }
-.modal-link:hover {
-	color: tomato;
+
+.flag-head {
+    background: rgb(71, 170, 255);
+    opacity: 0.7;
+    width: 50px;
+    height: 40px;
+    position: absolute;
+    left: 30px;
+    border-radius: 0px 5px 5px 0px;
 }
+
+.flag-head:hover {
+	opacity: 1;
+}
+
+.flag-con {
+	width: 50px;
+    height: 40px;
+    border: 4px dashed lightblue;
+    transition: .5s;
+    position: absolute;
+    bottom: 0;
+    right: -50px;
+}
+
+.flag- {
+	background: rgba(71, 170, 255, 0.7);
+    height: 40px;
+    width: 50px;
+    border-radius: 0px 5px 5px 0px;
+    position: absolute;
+    right: 0;
+    opacity: 0;
+}
+.flag-:before {
+	content: "";
+	width: 30px;
+	height: 40px;
+	background: rgba(177, 169, 168, 0.4);
+	position: absolute;
+	left: -30px;
+}
+
+.flag-con:hover {
+	width: 100px;
+	transform: translate(50px);
+}
+
+.flag-:hover {
+	opacity: 1;
+}
+/*keyframes*/
 @keyframes rotateKeys {
 	0% {
 		transform: rotate(22deg);

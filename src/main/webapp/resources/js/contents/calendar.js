@@ -9,6 +9,7 @@ export class Calendar {
 		var calendar = new FullCalendar.Calendar(calendarEl[0], {
 			timeZone: 'UTC',
 			locale: 'ko',
+			contentHeight: 600,
 			initialView: 'dayGridMonth',
 			events: 'https://fullcalendar.io/demo-events.json',
 			editable: true,

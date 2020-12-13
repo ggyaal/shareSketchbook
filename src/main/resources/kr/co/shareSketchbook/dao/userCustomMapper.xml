@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.shareSketchbook.dao.CustomDAO">
+	<select id="selectByKey" parameterType="string" resultType="CustomVO">
+		select * from user_custom where userKey=#{userKey}
+	</select>
+	
+	<insert id="insertCustom" parameterType="CustomVO">
+		insert into user_custom values (#{userKey}, #{coverTitle}, #{coverColor}, #{cover}, #{page}, #{contents}, #{spring}, #{flagList}, #{flag})
+	</insert>
+	
+	<update id="updateCustom" parameterType="CustomVO">
+		update user_custom
+		<set>
+			<if test="coverTitle!=null">coverTitle=#{coverTitle},</if>
+			<if test="coverColor!=null">coverColor=#{coverColor},</if>
+			<if test="cover!=null">cover=#{cover},</if>
+			<if test="page!=null">page=#{page},</if>
+			<if test="contents!=null">contents=#{contents},</if>
+			<if test="spring!=null">spring=#{spring},</if>
+			<if test="flagList!=null">flagList=#{flagList}</if>
+		</set>
+		where userKey=#{userKey}
+	</update>
+	
+</mapper>
