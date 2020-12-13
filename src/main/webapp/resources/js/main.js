@@ -1,5 +1,117 @@
 const token_ = $('meta[name="_csrf"]').attr('content').split(',');
 
+let user_ = {
+		get userKey() {
+			return this._userKey;		
+		},
+		get emailId() {
+			return this._emailId;
+		},
+		get name() {
+			return this._name;
+		},
+		get nickName() {
+			return this._nickName;
+		},
+		get gender() {
+			return this._gender;
+		},
+		get lv() {
+			return this._lv;
+		},
+		get photo() {
+			return this._photo;
+		},
+		get contents() {
+			return this._contents;
+		},
+		get coverTitle() {
+			return this._coverTitle;			
+		},
+		get flagList() {
+			return this._flagList;
+		},
+		get cover() {
+			return this._cover;
+		},
+		get coverColor() {
+			return this._coverColor;
+		},
+		get flag() {
+			return this._flag;
+		},
+		get page() {
+			return this._page;
+		},
+		get spring() {
+			return this._spring;
+		},
+		set user_(userData) {
+			this._userKey = userData.userKey;			
+			this._emailId = userData.emailId;
+			this._name = userData.name;
+			this._nickName = userData.nickName;
+			this._gender = userData.gender;
+			this._lv = userData.lv;
+			this._photo = userData.photo;			
+		},
+		set custom(custom) {
+			this._contents = custom.contents;
+			this._coverTitle = custom.coverTitle;			
+			this._flagList = custom.flagList;
+			this._cover = custom.cover;
+			this._coverColor = custom.coverColor;
+			this._flag = custom.flag;
+			this._page = custom.page;
+			this._spring = custom.spring;	
+		},
+		set userKey(userKey) {
+			this._userKey = userKey;			
+		},
+		set emailId(emailId) {
+			this._emailId = emailId;
+		},
+		set name(name) {
+			this._name = name;
+		},
+		set nickName(nickName) {
+			this._nickName = nickName;
+		},
+		set gender(gender) {
+			this._gender = gender;
+		},
+		set lv(lv) {
+			this._lv = lv;
+		},
+		set photo(photo) {
+			this._photo = photo;
+		},
+		set contents(contents) {
+			this._contents = contents;
+		},
+		set coverTitle(coverTitle) {
+			this._coverTitle = coverTitle;			
+		},
+		set flagList(flagList) {
+			this._flagList = flagList;
+		},
+		set cover(cover) {
+			this._cover = cover;
+		},
+		set coverColor(coverColor) {
+			this._coverColor = coverColor;
+		},
+		set flag(flag) {
+			this._flag = flag;
+		},
+		set page(page) {
+			this._page = page;
+		},
+		set spring(spring) {
+			this._spring = spring;
+		}
+}
+
 const aJax_ = (url, data, callBack) => {
 	$.ajax({
 		data: data,

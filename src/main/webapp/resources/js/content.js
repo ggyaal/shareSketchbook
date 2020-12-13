@@ -20,9 +20,9 @@ class Contents {
 	}
 }
 
-$('body').on('pageRenderSuccess', function(data) {
+$('body').on('pageRenderSuccess', function() {
 	var list;
-	if(data.contents) list = data.contents.split(',');
+	if(user_.contents) list = user_.contents.split(',');
 	const contents = new Contents(list);
 	contents.render();
 	

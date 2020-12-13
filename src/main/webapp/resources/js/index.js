@@ -2,6 +2,9 @@ var currentPage = 0;
 var finalPage;
 var isMove = true;
 var bookAlert = true;
+var page_ren = false;
+var flag_ren = false;
+var color_ren = false;
 
 const mainBook = $(".main-book");
 const bookPages = mainBook.find(".move-page");
@@ -22,74 +25,101 @@ const lockDiv = (isVi) => {
 		mainBook.append(lockOff);
 	}
 }
-const pageRender = (num, data, custom) => {
-	var flagsInterval = 45;
-	var flagNum = 0;
-	var flagList = data.flagList || [];
-	
-	for(i=0;i<num;i++) {
-		var page = $('<div />', {
-			id: 'p' + (i+1),
-			class: 'main-book-page move-page'
-		}).css({'z-index': num - i}).html($('<div />', {class: 'page-content'}));
+const pageRender = (num, coverTitle) => {
+	$('.main-book-page').remove();
+	return new Promise(function(resolve, reject) { 
+		if(coverTitle) $('#p0').find('b').html(coverTitle);
 		
-		mainBook.append(page);
-		if(flagList.includes(i + 1)) {
-			var flag = $('<div />', {
-				class: 'page-flag'
-			}).css('top', (30 + (flagsInterval * flagNum)) + 'px')
-				.html($('<div />', {class: 'flag-head', 'data-page': i+1}));
+		for(i=0;i<num;i++) {
+			var page = $('<div />', {
+				id: 'p' + (i+1),
+				class: 'main-book-page move-page'
+			}).css({'z-index': num - i}).html($('<div />', {class: 'page-content'}));
 			
-			page.append(flag);
-			flagNum++;
+			mainBook.append(page);
+			
+			if(i == num - 1) {
+				page.addClass('final-page');
+				finalPage = num;
+			}
 		}
 		
-		if(i == num - 1) page.addClass('final-page');
-	}
-	
-	custom(data);
+		page_ren = true;
+		resolve('success');
+	});
+}
+const flagRender = (flagList = '', flag) => {
+	$('.page-flag').remove();
+	return new Promise(function(resolve, reject) { 
+		if(!page_ren) reject('fail');
+		
+		var pages = $('.move-page');
+		var flagsInterval = 45;
+		
+		flagList.split(',').forEach(function(item, idx) {
+			var this_flag = $('<div />', {
+				class: 'page-flag'
+			}).css('top', (30 + (flagsInterval * idx)) + 'px')
+			.html($('<div />', {class: 'flag-head', 'data-page': item}));
+			
+			pages.eq(item).append(this_flag);
+		});
+		
+		var flagColor = {};
+		flag.split(',').forEach(function(item, idx) {
+			var _flagNo = item.slice(0, 1);
+			var _flagColor = item.slice(1);
+			
+			flagColor[_flagNo] = _flagColor;
+		});
+		
+		$.each(flagColor, function(key, value) {
+			pages.eq(key).find('.flag-head').css('background', value);
+		});
+		
+		flag_ren = true;
+		resolve('success');
+	});
+}
+const colorRender = (cover, coverColor, page, spring) => {
+	return new Promise(function(resolve, reject) { 
+		if(!page_ren) reject('fail');
+		
+		if(cover) $('#p0').css('background', cover);
+		if(coverColor) $('#p0').find('b').css('color', coverColor);
+		if(page) $('.main-book-page').css('background-color', page);
+		if(spring) {
+			$('head').append($('<style />', {type: 'text/css'}).append('.main-book.cust:before {background: ' + transColor(spring, 1.3) + '; } .main-book.cust:after {background: ' + spring + '; }'));
+			$('.main-book').addClass('cust');
+		}	
+		color_ren = true;
+		resolve('success');
+	});
 }
 
-const allRender = () => {
+const allRender = async (user_) => {
+	await pageRender(user_.contents.split(',').length, user_.coverTitle);
+	await flagRender(user_.flagList, user_.flag);
+	await colorRender(user_.cover, user_.coverColor, user_.page, user_.spring);
+	
+	mainBook.append(nextPageBtn).append(prevPageBtn).append(flagCon);
+	
+	var successEvent = $.Event('pageRenderSuccess');
+	$('body').trigger(successEvent);
+}
+const user_is = () => {
 	aJax_('isLogin', '', (isLogin) => {
 		if(isLogin != 'anonymousUser' || isLogin === undefined || isLogin === null) {
-			aJax_('userCustom', {userKey: isLogin},(data) => {
-				var pageNo = data.contents.split(',').length || 10;
-				finalPage = pageNo;
-				
-				pageRender(pageNo, data, (data) => {
-					if(data.cover) $('#p0').css('background', data.cover);
-					if(data.coverTitle) $('#p0').find('b').css('color', data.coverColor).html(data.coverTitle);
-					if(data.page) $('.main-book-page').css('background-color', data.page);
+			aJax_('whoIsIt', {it: isLogin, is: 'userKey'}, (userData) => {
+				user_.user_ = userData[0];
+				aJax_('userCustom', {userKey: isLogin}, (customData) => {
+					user_.custom = customData;
 					
-					if(data.flagList && data.flag) {
-						var flagList = [];
-						
-						$('.flag-head').each(function() {
-							flagList.push($(this).attr('data-page') * 1);
-						});
-						
-						data.flag.split(',').forEach(function(item, idx) {
-							var itemNo = item.slice(0, 1) * 1;
-							var color = item.slice(1);
-							
-							if($('.flag-head')[flagList.indexOf(itemNo)]) $('.flag-head')[flagList.indexOf(itemNo)].style.background = color;
-						});
-					}
-					
-					if(data.spring) {
-						$('head').append($('<style />', {type: 'text/css'}).append('.main-book.cust:before {background: ' + transColor(data.spring, 1.3) + '; } .main-book.cust:after {background: ' + data.spring + '; }'))
-						$('.main-book').addClass('cust');
-					}
-					
-					mainBook.append(nextPageBtn).append(prevPageBtn).append(flagCon);
-					var successEvent = $.Event('pageRenderSuccess', data);
-					$('body').trigger(successEvent);
+					$('body').trigger('user_on');
 				});
-				
-				lockDiv(false);
-				
 			});
+					
+			lockDiv(false);
 			
 		} else {
 			lockDiv(true);
@@ -98,9 +128,13 @@ const allRender = () => {
 	});
 }
 
+$('body').on('user_on', function() {
+	allRender(user_);
+});
+
 $(function() {
 	
-	allRender();
+	user_is();
 	
 });
 
@@ -213,17 +247,32 @@ $('body').on('pageRenderSuccess', function(data) {
 	
 	
 	// flags
-	$('.flag-head').click(function() {
+	$(document).on('click', '.flag-head', function() {
 		var thisPage = $(this).attr('data-page') * 1;
 		if(bookAlert) viewToPage(thisPage); 
 	});
-	
-	$('.flag-con').find('.flag-').click(function() {
+	$(document).on('click', '.flag-con .flag-', function() {
 		if(bookAlert) {
 			alert_('.main-book', 20, 'makeFlag', '이 페이지에 붙일까요?', true);	
 		}
 		bookAlert = false;
 	});
+	
+	$(document).on('click', '.page-flag', function(e) {
+		if(e.target.className == 'flag-head') return;
+		alert_('.main-book', 20, 'deleteFlag', '스티커를 제거할까요?', true);	
+		
+	});
+	
+	$(document).on({
+		mouseenter: function (e) { 
+			if(e.target.className == 'flag-head') return;
+			$(this).css({'box-shadow': 'rgb(0, 0, 0) 25px 0px 30px 10px', 'opacity': 1});
+		},
+   		mouseleave: function (e) {	
+   			$(this).css({'box-shadow': '', 'opacity': ''});
+   		}
+	}, '.page-flag');
 	
 });
 
@@ -325,13 +374,28 @@ $('body').on('alertOk', function(data) {
 			return a - b;
 		});
 		
-		aJax_('setCustom', {'flagList': flagList.join(',')}, (data) => {
+		aJax_('setCustom', {'flagList': flagList.join(',')}, function(data) {
 			if(data) {
-				$('body').trigger('flagRender');
+				var event = $.Event('flagRender', {flagList: flagList.join(',')});
+				$('body').trigger(event);
 			}else {
 				alert_('.main-book', 20, '_alert', '다시 시도해주세요 ..', false);
 			}
 		});
+	}else if(data.alertId == 'deleteFlag') {
+		var flagList = user_.flagList.split(',');
+		var idx = flagList.indexOf('' + currentPage);
+		flagList.splice(idx, 1);
+		
+		aJax_('setCustom', {'flagList': flagList.join(',')}, function(data) {
+			if(data) {
+				var event = $.Event('flagRender', {flagList: flagList.join(',')});
+				$('body').trigger(event);
+			}else {
+				alert_('.main-book', 20, '_alert', '다시 시도해주세요 ..', false);
+			}
+		});
+		
 	}
 });
 
@@ -342,6 +406,7 @@ $('body').on('alertCancel', function(data) {
 });
 
 // reRender
-$('body').on('flagRender', function() {
-	console.log('오 모야');
+$('body').on('flagRender', function(data) {
+	user_.flagList = data.flagList;
+	flagRender(user_.flagList, user_.flag);
 });

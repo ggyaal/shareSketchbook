@@ -237,12 +237,13 @@
 }
 /*flags*/
 .page-flag {
-    background: rgba(177, 169, 168, 0.4);
+    background: rgb(177, 169, 168);
     height: 40px;
     width: 30px;
     position: absolute;
     right: 0;
     top: 30px;
+    opacity: .8;
 }
 
 .flag-head {
