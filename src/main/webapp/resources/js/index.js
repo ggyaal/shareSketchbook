@@ -10,7 +10,65 @@ const mainBook = $(".main-book");
 const bookPages = mainBook.find(".move-page");
 const nextPageBtn = $("<div>").addClass("book-next");
 const prevPageBtn = $("<div>").addClass("book-prev");
-const flagCon = $('<div />', {class: 'flag-con'}).html($('<div />', {class: 'flag-'}));
+const form_submit = function() {
+	var userKey = $('#userKey').val();
+	var password = $('#password').val();
+	
+	if(userKey.length < 3 || password.length < 3) {
+		alert_('.main-book', 20, '_alert', '키 또는 비밀번호가 짧습니다...', false);
+		return false;
+	}
+	return true;
+}
+const flagCon = $('<div />', {class: 'flag-con'}).html($('<div />', {class: 'flag-con-'}).html($('<div />', {class: 'flag-'})));
+const colorPickerRender = () => {
+	var colorPicker = new iro.ColorPicker("#palette-pick-picker", {
+		width: 200,
+		color: "#fff",
+		layout: [
+					{ 
+						component: iro.ui.Wheel,
+						options: {
+							borderColor: '#000000',
+							wheelDirection: 'clockwise'
+		          
+						}
+					},
+					{ 
+						component: iro.ui.Slider,
+						options: {
+							sliderType: 'hue'
+						}
+					},
+					{
+						component: iro.ui.Slider,
+						options: {
+							sliderType: 'saturation'
+						}
+					}
+				]
+	});
+		  
+	colorPicker.on('color:change', function(color) {
+		var pick = $('#palette-pick');
+		var bro = pick.siblings();
+		var sample = pick.parents('.palette').siblings('.sample-img');
+		
+		pick.css('background', color.hexString);
+		sample.find('.sample-obj').css('background', color.hexString);
+
+		bro.css('background', '');
+		bro.find('*').remove();
+	});
+}
+const palette = () => {
+	var palette = $('<div />', {class: 'palette'});
+	var doc = $('<div />', {id: 'palette-doc', class: 'palette-'});
+	var picker = $('<div />', {id: 'palette-pick', class: 'palette-'});
+	
+	palette.append([doc, picker]);
+	return palette;
+}
 const lockDiv = (isVi) => {
 	if(isVi) {
 		$(".lock-off").remove();
@@ -48,7 +106,7 @@ const pageRender = (num, coverTitle) => {
 		resolve('success');
 	});
 }
-const flagRender = (flagList = '', flag) => {
+const flagRender = (flagList = '', flag = '') => {
 	$('.page-flag').remove();
 	return new Promise(function(resolve, reject) { 
 		if(!page_ren) reject('fail');
@@ -56,26 +114,30 @@ const flagRender = (flagList = '', flag) => {
 		var pages = $('.move-page');
 		var flagsInterval = 45;
 		
-		flagList.split(',').forEach(function(item, idx) {
-			var this_flag = $('<div />', {
-				class: 'page-flag'
-			}).css('top', (30 + (flagsInterval * idx)) + 'px')
-			.html($('<div />', {class: 'flag-head', 'data-page': item}));
-			
-			pages.eq(item).append(this_flag);
-		});
+		if(flagList && flagList != '') {
+			flagList.split(',').forEach(function(item, idx) {
+				var this_flag = $('<div />', {
+					class: 'page-flag'
+				}).css('top', (30 + (flagsInterval * idx)) + 'px')
+				.html($('<div />', {class: 'flag-head', 'data-page': item}));
+				
+				pages.eq(item).append(this_flag);
+			});		
+		}
 		
-		var flagColor = {};
-		flag.split(',').forEach(function(item, idx) {
-			var _flagNo = item.slice(0, 1);
-			var _flagColor = item.slice(1);
+		if(flag && flag!='') {
+			var flagColor = {};
+			flag.split(',').forEach(function(item, idx) {
+				var _flagNo = item.slice(0, 1) * 1;
+				var _flagColor = item.slice(1);
+				
+				flagColor[_flagNo] = _flagColor;
+			});
 			
-			flagColor[_flagNo] = _flagColor;
-		});
-		
-		$.each(flagColor, function(key, value) {
-			pages.eq(key).find('.flag-head').css('background', value);
-		});
+			$.each(flagColor, function(key, value) {
+				pages.eq(key).find('.flag-head').css('background', value);
+			});			
+		}
 		
 		flag_ren = true;
 		resolve('success');
@@ -245,7 +307,6 @@ $('body').on('pageRenderSuccess', function(data) {
 		}
 	});
 	
-	
 	// flags
 	$(document).on('click', '.flag-head', function() {
 		var thisPage = $(this).attr('data-page') * 1;
@@ -253,7 +314,9 @@ $('body').on('pageRenderSuccess', function(data) {
 	});
 	$(document).on('click', '.flag-con .flag-', function() {
 		if(bookAlert) {
-			alert_('.main-book', 20, 'makeFlag', '이 페이지에 붙일까요?', true);	
+			var contents = $('<b />').html('이 페이지에 붙힐까요?');
+			var flag_sample = $('<div />', {class: 'sample-img'}).append($('<div />', {class: 'sample-obj flag-'}));
+			alert_('.main-book', 20, 'makeFlag', [contents, palette(), flag_sample], true);	
 		}
 		bookAlert = false;
 	});
@@ -283,7 +346,7 @@ function loginModal() {
 	
 	if(mainBook.find(".login-modal").length == 0) {
 		var modal = tagCon('div', {'class': 'login-modal modal-con'});
-		var formTag = tagCon('form', {'action': 'login', 'method': 'post'});	
+		var formTag = tagCon('form', {'action': 'login', 'method': 'post', 'onsubmit': 'return form_submit();'});	
 		var title = tagCon('b', {'class': 'modal-title'}).html("열쇠 입력");
 		modal.append(title);
 		
@@ -323,6 +386,63 @@ function loginModal() {
 	}
 }
 
+$(document).on('keyup', '#userKey', function() {
+	var data = $(this).val();
+	if(data.length > 3) {
+		aJax_('whoIsIt', {it: data, is: 'userKey'}, (data) => {
+			if(data && data.length!=0) {
+				$('#makeKey').attr('href', '#').html('아, 키를 찾았어요 !');
+				$('#key-in').css('display', '');
+			}else {
+				$('#makeKey').attr('href', 'sign').html('열쇠가 없으신가요?');				
+			}
+		});
+	} else {
+		$('#makeKey').attr('href', 'sign').html('열쇠가 없으신가요?');						
+	}
+});
+$(document).on('keyup', '#cover-name', function() {
+	var data = $(this).val();
+
+	$('#p0 b').html(data);		
+})
+
+$(document).on('click', '#p0 b', function(e) {
+	if($('#cover-name').length == 0) {
+		var _input = $('<input />', {type: 'text', id: 'cover-name', placeholder: '제목을 입력하세요 !', 'data-b': $(this).html()});
+		_input.css({height: '50px', width: '200px', 'border-radius': '20px', position: 'absolute', left: 'calc(50% - 100px)', 'text-align': 'center', bottom: '150px', 'z-index': 20});
+		mainBook.append(_input);
+	}else {
+		if(e.target.id != 'cover-name') {
+			$(this).html($('#cover-name').attr('data-b'));
+			$('#cover-name').remove();
+		}
+	}
+});
+	
+$(document).on('click', '#palette-doc', function(e) {
+	var sample = $(this).parents('.palette').siblings('.sample-img');
+	var bro = $(this).siblings();
+	var _randomColor = randomColor();
+	
+	$(this).css('background', _randomColor);
+	sample.find('.sample-obj').css('background', _randomColor);
+	
+	bro.find('*').remove();
+	bro.css('background', '');
+	
+});
+$(document).on('click', '#palette-pick', function(e) {
+	if($('#palette-pick-picker').length == 0) {
+		$(this).append($('<div />', {id: 'palette-pick-picker'}));
+		colorPickerRender();
+	}else {
+		if(e.target.id == 'palette-pick') {
+			$('#palette-pick-picker').remove();
+		}
+	}
+});
+
 $(document).on('click', '.lock-on .lock-click', () => {
 	loginModal();
 });
@@ -337,7 +457,7 @@ $(document).on({
 				lockOn.css("transform", "rotate(-45deg) translate(-80px, 95px)");
 				lockOnBg.css("transform", "rotate(-45deg) translate(-80px, 95px)");
        },
-       		mouseleave: function () {           
+       		mouseleave: function () {
 				var lockOn = $(".lock-on");
 				var lockOnBg = $(".lock-on-bg");
 				lockOn.css("transform", "");	
@@ -347,7 +467,6 @@ $(document).on({
 
 //alert
 $('body').on('alertOk', function(data) {
-	removModal($('#' + data.alertId).attr('data-modal'));
 	
 	if(data.alertId == '_alert') {
 		bookAlert = true;
@@ -365,7 +484,7 @@ $('body').on('alertOk', function(data) {
 			return;
 		} else if(currentPage == 0 || currentPage == finalPage + 1) {
 			alert_('.main-book', 20, '_alert', '해당 페이지는 붙힐 수 없습니다.', false);
-			return;			
+			return;
 		} else {
 			flagList.push(currentPage);
 		}
@@ -374,9 +493,31 @@ $('body').on('alertOk', function(data) {
 			return a - b;
 		});
 		
-		aJax_('setCustom', {'flagList': flagList.join(',')}, function(data) {
+		var sample_color = $('#makeFlag').find('.sample-obj').css('background-color');
+		
+		var flagColor = {};
+		if(user_.flag && user_.flag!='') {
+			user_.flag.split(',').forEach(function(item, idx) {
+				var _flagNo = item.slice(0, 1) * 1;
+				var _flagColor = item.slice(1);
+				
+				flagColor[_flagNo] = _flagColor;
+			});		
+		}
+		if(sample_color && sample_color.length!=0) flagColor[currentPage] = rgbTohex(sample_color);
+		
+		if(flagColor && flagColor!={}) {
+			var flagColors = '';
+			$.each(flagColor, function(key, value) {
+				flagColors += key + value + ',';
+			});
+			
+			flagColors = flagColors.slice(0, -1);			
+		}
+		
+		aJax_('setCustom', {'flagList': flagList.join(','), 'flag': flagColors}, function(data) {
 			if(data) {
-				var event = $.Event('flagRender', {flagList: flagList.join(',')});
+				var event = $.Event('flagRender', {flagList: flagList.join(','), flag: flagColors});
 				$('body').trigger(event);
 			}else {
 				alert_('.main-book', 20, '_alert', '다시 시도해주세요 ..', false);
@@ -384,12 +525,22 @@ $('body').on('alertOk', function(data) {
 		});
 	}else if(data.alertId == 'deleteFlag') {
 		var flagList = user_.flagList.split(',');
+		var flagColor = user_.flag.split(',');
+		
 		var idx = flagList.indexOf('' + currentPage);
 		flagList.splice(idx, 1);
 		
-		aJax_('setCustom', {'flagList': flagList.join(',')}, function(data) {
+		var flagColors = '';
+		flagColor.map(function(idxColor) {
+			if(!idxColor.startsWith(currentPage)) {
+				flagColors += idxColor + ',';
+			}
+		});
+		flagColors = flagColors.slice(0, -1);
+
+		aJax_('setCustom', {'flagList': flagList.join(','), 'flag': flagColors}, function(data) {
 			if(data) {
-				var event = $.Event('flagRender', {flagList: flagList.join(',')});
+				var event = $.Event('flagRender', {flagList: flagList.join(','), 'flag': flagColors});
 				$('body').trigger(event);
 			}else {
 				alert_('.main-book', 20, '_alert', '다시 시도해주세요 ..', false);
@@ -397,6 +548,7 @@ $('body').on('alertOk', function(data) {
 		});
 		
 	}
+	removModal($('#' + data.alertId).attr('data-modal'));
 });
 
 $('body').on('alertCancel', function(data) {
@@ -408,5 +560,6 @@ $('body').on('alertCancel', function(data) {
 // reRender
 $('body').on('flagRender', function(data) {
 	user_.flagList = data.flagList;
+	user_.flag = data.flag;
 	flagRender(user_.flagList, user_.flag);
 });

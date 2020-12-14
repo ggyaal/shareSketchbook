@@ -33,6 +33,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.4.0/locales-all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/lang/summernote-ko-KR.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 	
 	<script src="${pageContext.request.contextPath }/resources/js/main.js"></script>
 	<script src="${pageContext.request.contextPath }/resources/js/index.js"></script>

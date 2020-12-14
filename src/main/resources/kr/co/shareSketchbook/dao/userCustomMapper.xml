@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="page!=null">page=#{page},</if>
 			<if test="contents!=null">contents=#{contents},</if>
 			<if test="spring!=null">spring=#{spring},</if>
+			<if test="flag!=null">flag=#{flag},</if>
 			<if test="flagList!=null">flagList=#{flagList}</if>
 		</set>
 		where userKey=#{userKey}

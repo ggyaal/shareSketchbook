@@ -177,7 +177,7 @@ const transColor = (hexColor, deep = 2) => {
 	if(deep >=0) {
 		colors.forEach((item, idx) => {
 			var value = Math.floor(item / deep).toString(16);
-			trans += value.length == 2? value : '0' + value;
+			trans += ('0' + value.length).slice(-2);
 		});	
 	} else if(deep < 0) {
 		colors.forEach(function(item, idx) {
@@ -187,6 +187,32 @@ const transColor = (hexColor, deep = 2) => {
 	}
 	
 	return trans;
+}
+
+const randomColor = () => {
+	var result = '#';
+		for(i=0; i<3; i++) {
+			result += (255 - Math.floor((Math.random() * 127) + 1)).toString(16);
+		}
+	return result;
+}
+
+const rgbTohex = (code) => {
+	if (code.search("rgb") == -1) {
+		return code;
+	} else {
+		if(code.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/)) {
+			code = code.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+		}else if(code.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(0\.\d+))?\)$/)) {
+			code = code.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(0\.\d+))?\)$/);
+		}else if(code.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\.\d+))?\)$/)) {
+			code = code.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\.\d+))?\)$/);
+		}
+		function hex(x) {
+			return ("0" + parseInt(x).toString(16)).slice(-2);
+		}
+		return "#" + hex(code[1]) + hex(code[2]) + hex(code[3]); 
+	}
 }
 
 const removModal = (location) => {
