@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.co.shareSketchbook.service.CustomService;
 import kr.co.shareSketchbook.service.UserKeyService;
+import kr.co.shareSketchbook.vo.CustomVO;
 import kr.co.shareSketchbook.vo.UserKeyVO;
 
 @Controller
@@ -30,6 +32,8 @@ public class MainController {
 	
 	@Autowired
 	UserKeyService userKeyService;
+	@Autowired
+	CustomService customService;
 	
 	@RequestMapping(value = {"/", "/index", "/main"})
 	public String index(Model model) {
@@ -90,6 +94,32 @@ public class MainController {
 			model.addAttribute("status", "02");						
 		}
 		return "sign";
+	}
+	
+	@RequestMapping(value = "/userCustom", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+	@ResponseBody
+	public CustomVO custom(@RequestParam String userKey, Model model) {
+		logger.debug("custom ! > [" + userKey + "]");
+		
+		return customService.selectByKey(userKey);
+	}
+
+	@RequestMapping(value = "/setCustom", method = RequestMethod.POST)
+	@ResponseBody
+	public String customSet(@ModelAttribute CustomVO vo, Model model) {
+		logger.info("set custom ! > [" + vo + "]");
+		String isSuccess = "0";
+		String userKey = getPrincipal();
+		if(userKey!="anonymousUser") {
+			CustomVO dbVO = customService.selectByKey(userKey);
+			vo.setUserKey(userKey);
+			if(dbVO!=null) {
+				if(customService.updateCustom(vo)) isSuccess = "1";
+			}else {
+				if(customService.insertCustom(vo)) isSuccess = "1";
+			}			
+		}
+		return isSuccess;
 	}
 	
 	private String getPrincipal() {

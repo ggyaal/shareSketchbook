@@ -4,13 +4,11 @@ html, body {
 	padding: 0;
 	margin: 0;
 }
-.modal-bg {
-	position: fixed;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 14;
+
+label input {
+	display: none;
 }
+
 .container {
 	position: fixed;
 	height: 100vh;
@@ -29,4 +27,126 @@ html, body {
 	justify-content: center;
 	align-items: center;
 	padding: 10px;
+}
+
+/*modal*/
+.modal-bg {
+	position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 20;
+}
+
+.alert- {
+    min-width: 250px;
+    min-height: 200px;
+    position: absolute;
+    background: whitesmoke;
+    padding: 10px;
+    border-radius: 10px;
+    left: calc(50% - 125px);
+    top: 15%;
+    box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+    z-index: 20;
+}
+
+.alert-content {
+	position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+    flex-flow: column;
+}
+
+.alert-btn {
+	position: absolute;
+    bottom: 10px;
+    height: 50px;
+    width: 200px;
+    left: calc(50% - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alert-btn- {
+    background: lightblue;
+    width: 90px;
+    height: 80%;
+    border: 2px solid #338ac7;
+    border-radius: 10px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.alert-btn-:hover {
+	background: #5bbbda;
+}
+
+.alert-2 {
+    position: absolute;
+    top: 100px;
+    left: 30%;
+}
+
+.alert-sample {
+    border: 5px solid lavender;
+    width: 75%;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    margin: 5px;
+}
+
+._title {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 10px;
+    cursor: pointer;
+    transition: 1s;
+}
+
+._title:before {
+	content: '+';
+    color: #ffffff;
+    font-size: 20pt;	
+}
+
+._active ._title {
+    border-bottom: 1px dashed white;	
+}
+
+._active ._title:before {
+    content: 'x';
+    color: #ffffff;
+    font-size: 20pt;    
+}
+
+/*animations*/
+.appear {
+	opacity: 0;
+	animation: appear_this 3s;
+}
+
+@keyframes appear_this {
+	0% {
+		opacity: 0;
+		transform: translate(0px, 50px);
+	}
+	80% {
+		opacity: 1;
+		transform: translate(0px);
+	}
+	100% {
+		opacity: 0;
+	}
 }
