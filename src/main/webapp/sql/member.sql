@@ -25,7 +25,7 @@ CREATE TABLE user_custom (
 	coverTitle varchar2(50),
 	coverColor varchar2(10),
 	cover varchar2(10),
-	page varchar2(10),
+	page varchar2(100),
 	contents varchar2(100),
 	spring varchar2(10),
 	flagList varchar2(25),

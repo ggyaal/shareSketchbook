@@ -142,18 +142,17 @@ const tagCon = (tag, tagAttr, tagCss) => {
 }
 
 
-const modal_bg = (contentClass, parentPadding = 0, isVi = true) => {
+const modal_bg = (contentClass, this_id, isVi = true) => {
 	var modalBg = $("<div>").addClass("modal-bg")
-					.attr("id", contentClass + "-bg")
-					.css("margin", -parentPadding);
+					.attr({'id': this_id + '-bg',"data-id":  contentClass});
 	if(isVi === true) $("." + contentClass).append(modalBg);
-	else $("." + contentClass + " .modal-bg").remove();
+	else $("#" + this_id + '-bg').remove();
 }
 
-const alert_ = (place, placeMargin, alertId, content, isCancel = false) => {
+const alert_ = (place, alertId, content, isCancel = false, _data ='') => {
 	if($('#' + alertId).length!=0) return;
 	
-	var alertWin = $('<div />', {id: alertId, class: ' alert- modal-con', 'data-modal': place.slice(1)});
+	var alertWin = $('<div />', {id: alertId, class: ' alert- modal-con', 'data-modal': place.slice(1), 'data-a': _data});
 	var alertCon = $('<div />',{class: 'alert-content'});
 	var alertBtn = $('<div />', {class: 'alert-btn'});
 	
@@ -165,9 +164,19 @@ const alert_ = (place, placeMargin, alertId, content, isCancel = false) => {
 	
 	alertWin.append(alertCon).append(alertBtn);
 	
-	modal_bg(place.slice(1), placeMargin);
+	modal_bg(place.slice(1), alertId);
 	$(place).append(alertWin);
 	
+}
+
+const alert_2 = (place, msg, color = 'white', second = 3) => {
+	var _alertNo = $('.alert-2').length;
+	var _alert = $('<div />', {class: 'alert-2 appear', id: 'al_2_' + _alertNo}).css({'animation': 'appear_this ' + second + 's', 'color': color, 'font-weight': '700', 'z-index': '21'}).html(msg);
+	
+	setTimeout(function() {
+		$('#al_2_' + _alertNo).remove();
+	}, second * 1000);
+	$(place).append(_alert);
 }
 
 const transColor = (hexColor, deep = 2) => {
@@ -177,7 +186,7 @@ const transColor = (hexColor, deep = 2) => {
 	if(deep >=0) {
 		colors.forEach((item, idx) => {
 			var value = Math.floor(item / deep).toString(16);
-			trans += ('0' + value.length).slice(-2);
+			trans += ('0' + value).slice(-2);
 		});	
 	} else if(deep < 0) {
 		colors.forEach(function(item, idx) {
@@ -215,20 +224,21 @@ const rgbTohex = (code) => {
 	}
 }
 
-const removModal = (location) => {
-	$('.' + location + ' .modal-con').remove();
-	$('.' + location + ' .modal-bg').remove();
+const removModal = (location, this_ids) => {
+	$('#' + this_ids).remove();
+	$('#' + this_ids + '-bg').remove();
 	
 	var event = $.Event('alertCancel', {loc: location});
 	$('body').trigger(event);
 };
 	
 $(document).on("click", ".modal-bg", function() {
-	removModal($(this).attr("id").slice(0, -3));
+	removModal($(this).attr('data-id'), $(this).attr("id").slice(0, -3));
 });
 
 $(document).on('click', 'div[name="alert-cancel"]', function() {
-	removModal($(this).parents('.alert-').attr('data-modal'));
+	var _modal = $(this).parents('.alert-');
+	removModal(_modal.attr('data-modal'), _modal.attr('id'));
 });
 
 $(document).on('click', 'div[name="alert-ok"]', function() {

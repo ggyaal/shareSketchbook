@@ -3,11 +3,11 @@ export class Note {
 		var noteEl = $('<form />', {
 			action: '#',
 			method: 'post'
-		}).html($('<textarea />', {class: 'summernote', name: 'editordata'}));
+		}).html($('<textarea />', {id: 'summernote', name: 'editordata'}));
 		
 		place.append(noteEl);
 		
-		$('.summernote').summernote({
+		$('#summernote').summernote({
 			  height: 300,
 			  minHeight: null,
 			  maxHeight: null,

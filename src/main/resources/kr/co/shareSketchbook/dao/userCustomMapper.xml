@@ -8,7 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<insert id="insertCustom" parameterType="CustomVO">
-		insert into user_custom values (#{userKey}, #{coverTitle}, #{coverColor}, #{cover}, #{page}, #{contents}, #{spring}, #{flagList}, #{flag})
+		insert into user_custom values (#{userKey}, #{coverTitle, jdbcType=VARCHAR}, #{coverColor, jdbcType=VARCHAR}, #{cover, jdbcType=VARCHAR}, #{page, jdbcType=VARCHAR}, #{contents, jdbcType=VARCHAR}, #{spring, jdbcType=VARCHAR}, #{flagList, jdbcType=VARCHAR}, #{flag, jdbcType=VARCHAR})
 	</insert>
 	
 	<update id="updateCustom" parameterType="CustomVO">

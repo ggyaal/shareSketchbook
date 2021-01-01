@@ -18,4 +18,8 @@ export class Calendar {
 		
 		calendar.render();
 	}
+	
+	render() {
+		
+	}
 }
